@@ -21,15 +21,15 @@
 
 int main()
 {
-	Cheaturanga::Position pos{ Cheaturanga::
-		//fromFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR b KQkq - 0 1")};
-		fromFEN("3rkb1r/1bppqp1p/ppn2n2/4p1pP/4P3/P4N2/1PPPBPP1/RNBQ1RK1 w k g6 0 10") };
+	Cheaturanga::FEN fen1{Cheaturanga::
+		decode("rnbqkbnr/ppp1p1pp/8/3pPp2/8/8/PPPP1PPP/RNBQKBNR w KQkq - 0 3")};
 
-	Cheaturanga::step(pos, [](const auto& q)
+	Cheaturanga::step(fen1.pos, [](const auto &q)
 		{
-			std::cout << "<" << int(q.from.h) << " | " << int(q.from.v) << ">" << "\t" <<
-				"<" << int(q.to.h) << " | " << int(q.to.v) << ">" << std::endl;
+			std::cout << q.from << '\t' << q.to << std::endl;
 		});
+
+	const auto fenS{Cheaturanga::encode(fen1)};
 
 	return 0;
 }

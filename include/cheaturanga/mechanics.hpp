@@ -17,13 +17,14 @@
 // rasimvaliullin@hotmail.com
 
 #include <cassert>
+#include <sstream>
 
 namespace Cheaturanga
 {
 	constexpr auto Width = 8;
 	constexpr auto Height = 8;
 
-	struct Coords { char h = -1, v = -1; };
+	struct Coords { char x = -1, y = -1; };
 
 	struct Step { Coords from, to; };
 
@@ -40,55 +41,61 @@ namespace Cheaturanga
 		const auto &operator[](const Coords &coords) const;
 	};
 
+	struct FEN
+	{
+		Position pos;
+		int halfMove50 = -1, fullMove = -1;
+	};
+
 	inline bool operator==(const Coords &o, const Coords &a)
 	{
-		return o.h == a.h && o.v == a.v;
+		return o.x == a.x && o.y == a.y;
 	}
 
 	inline Coords operator+(const Coords &o, const Coords &a)
 	{
-		return {char(o.h + a.h), char(o.v + a.v)};
+		return {char(o.x + a.x), char(o.y + a.y)};
 	}
 
 	inline Coords operator-(const Coords &o, const Coords &a)
 	{
-		return {char(o.h - a.h), char(o.v - a.v)};
+		return {char(o.x - a.x), char(o.y - a.y)};
 	}
 
 	inline Coords operator-(const Coords &o)
 	{
-		return {char(-o.h), char(-o.v)};
+		return {char(-o.x), char(-o.y)};
 	}
 
 	inline Coords &operator+=(Coords &o, const Coords &a)
 	{
-		o.h += a.h; o.v += a.v;
+		o.x += a.x; o.y += a.y;
 		return o;
 	}
 
 	inline Coords &operator-=(Coords &o, const Coords &a)
 	{
-		o.h -= a.h; o.v -= a.v;
+		o.x -= a.x; o.y -= a.y;
 		return o;
 	}
 
 	inline bool valid(const Coords &coords)
 	{
-		return coords.h >= 0 && coords.h < Width && coords.v >= 0 && coords.v < Height;
+		return coords.x >= 0 && coords.x < Width && coords.y >= 0 && coords.y < Height;
 	}
 
 	inline auto &Position::operator[](const Coords &coords)
 	{
 		assert(valid(coords));
 
-		return layout.d[coords.v][coords.h];
+		return layout.d[coords.y][coords.x];
 	}
 
 	const auto &Position::operator[](const Coords &coords) const
 	{
 		assert(valid(coords));
 
-		return layout.d[coords.v][coords.h];
+		return layout.d[coords.y][coords.x];
 	}
 
 	inline bool opponent(char occ, char side)
@@ -149,7 +156,7 @@ namespace Cheaturanga
 		if (pos[target] == 0)
 		{
 			stepCallback(Step{start, target});
-			if (start.v == (side == 0 ? Width - 2 : 1) && pos[target += f] == 0)
+			if (start.y == (side == 0 ? Width - 2 : 1) && pos[target += f] == 0)
 				stepCallback(Step{start, target});
 		}
 
@@ -222,7 +229,7 @@ namespace Cheaturanga
 		const auto b = pos.side == 0 ? pos.castling : pos.castling >> 2;
 		if ((b & 1) != 0)
 		{
-			const Coords k{Width / 2, pos.side == 0 ? Height - 1 : 0}, r{Width - 1, k.v};
+			const Coords k{Width / 2, pos.side == 0 ? Height - 1 : 0}, r{Width - 1, k.y};
 			for (Coords w{k}; w += Coords{1, 0}, true; )
 			{
 				if (w == r) { stepCallback(Step{k, k + Coords{2, 0}}); break; }
@@ -231,7 +238,7 @@ namespace Cheaturanga
 		}
 		if ((b & 0b10) != 0)
 		{
-			const Coords k{Width / 2, pos.side == 0 ? Height - 1 : 0}, r{0, k.v};
+			const Coords k{Width / 2, pos.side == 0 ? Height - 1 : 0}, r{0, k.y};
 			for (Coords w{k}; w -= Coords{1, 0}, true; )
 			{
 				if (w == r) { stepCallback(Step{k, k - Coords{2, 0}}); break; }
@@ -263,55 +270,139 @@ namespace Cheaturanga
 	template<typename StepCallback>
 	inline void step(const Position &pos, StepCallback stepCallback)
 	{
-		for (Coords start{0, 0}; start.v < Height; ++start.v)
-			for (start.h = 0; start.h < Width; ++start.h)
+		for (Coords start{0, 0}; start.y < Height; ++start.y)
+			for (start.x = 0; start.x < Width; ++start.x)
 				test(pos, start, stepCallback);
 		castling(pos, stepCallback);
 	}
 
-	Position fromFEN(const std::string &fen)
+	Coords coordsFromString(const std::string_view &sv)
+	{
+		if (std::size(sv) < 2 || 'a' > sv[0] ||
+			sv[0] > 'h' || '1' > sv[1] || sv[1] > '8') return {};
+
+		return {sv[0] - 'a', '8' - sv[1]};
+	}
+
+	std::string coordsToString(const Coords &coords)
+	{
+		if (!valid(coords)) return "-";
+
+		return {'a' + coords.x, '8' - coords.y};
+	}
+
+	std::ostream &operator<<(std::ostream &s, const Coords &coords)
+	{
+		return s << '[' << int{coords.x} << '|' << int{coords.y} << ']';
+	}
+
+	FEN decode(const std::string &fenS)
 	{
 		// rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
 
-		Position pos;
+		FEN fen;
 
 		Coords coords{0, 0};
 		size_t i = 0;
+
 		for (; ; ++i)
 		{
-			assert(i < std::size(fen));
+			if (i >= std::size(fenS)) return fen;
 
-			const auto c = fen[i];
-			if ('0' <= c && c <= '9') coords.h += c - '0';
+			const auto c = fenS[i];
+			if ('0' <= c && c <= '9') coords.x += c - '0';
 			else if ('A' <= c && c <= 'Z' || 'a' <= c && c <= 'z')
-			{	valid(coords); pos[coords] = c; ++coords.h;	}
-			else if (c == '/') { coords.h = 0; ++coords.v; }
-			else break;
+			{
+				if (!valid(coords)) return fen;
+
+				fen.pos[coords] = c; ++coords.x;
+			}
+			else if (c == '/') { coords.x = 0; ++coords.y; }
+			else if (c == ' ') break;
+			else return fen;
 		}
 
-		if (fen[++i] != 'w') ++pos.side;
+		if (++i >= std::size(fenS)) return fen;
 
-		for (++i; ++i; )
+		if (fenS[i] != 'w') ++fen.pos.side;
+
+		if (++i >= std::size(fenS) || fenS[i] != ' ') return fen;
+
+		while (true)
 		{
-			assert(i < std::size(fen));
+			if (++i >= std::size(fenS)) return fen;
 
-			const auto c = fen[i];
-			if (c == 'K') pos.castling |= 1;
-			else if (c == 'Q') pos.castling |= 0b10;
-			else if (c == 'k') pos.castling |= 0b100;
-			else if (c == 'q') pos.castling |= 0b1000;
-			else break;
+			const auto c = fenS[i];
+			if (c == 'K') fen.pos.castling |= 1;
+			else if (c == 'Q') fen.pos.castling |= 0b10;
+			else if (c == 'k') fen.pos.castling |= 0b100;
+			else if (c == 'q') fen.pos.castling |= 0b1000;
+			else if (c == ' ') break;
 		}
 
-		assert(i < std::size(fen));
+		if (++i >= std::size(fenS)) return fen;
 
-		if (fen[++i] != '-')
+		if (fenS[i] == '-')
+			{	if (++i >= std::size(fenS)) return fen;		}
+		else
 		{
-			assert(i + 1 < std::size(fen));
+			if (++++i >= std::size(fenS)) return fen;
 
-			pos.enPassant = {fen[i] - 'a', '8' - fen[++i]};
+			const auto e{std::begin(fenS) + i};
+			fen.pos.enPassant = coordsFromString({e - 2, e});
 		}
 
-		return pos;
+		if (fenS[i] != ' ') return fen;
+
+		std::istringstream ss{fenS.substr(++i)};
+		ss >> fen.halfMove50;
+
+		if (ss.fail()) return fen;
+
+		ss >> fen.fullMove;
+
+		if (ss.fail()) fen.fullMove = -1;
+
+		return fen;
+	}
+
+	std::string encode(const FEN &fen)
+	{
+		std::string fenS;
+
+		for (Coords s{0, 0}; s.y < Height; ++s.y)
+		{
+			if (!std::empty(fenS)) fenS += '/';
+
+			s.x = 0;
+			for (char x = 0; ; ++s.x)
+			{
+				if (s.x < Width && fen.pos[s] == 0) continue;
+
+				const auto d = s.x - x;
+				if (d > 0) fenS += '0' + d;
+				++(x = s.x);
+
+				if (s.x < Width) fenS += fen.pos[s]; else break;
+			}
+		}
+
+		fenS += fen.pos.side == 0 ? " w " : " b ";
+
+		if (fen.pos.castling == 0) fenS += '-';
+		else
+		{
+			if ((fen.pos.castling & 1) != 0) fenS += 'K';
+			if ((fen.pos.castling & 0b10) != 0) fenS += 'Q';
+			if ((fen.pos.castling & 0b100) != 0) fenS += 'k';
+			if ((fen.pos.castling & 0b1000) != 0) fenS += 'q';
+		}
+
+		fenS += " " + coordsToString(fen.pos.enPassant);
+
+		std::stringstream ss;
+		ss << " " << fen.halfMove50 << " " << fen.fullMove;
+
+		return fenS += ss.str();
 	}
 }
