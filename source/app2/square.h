@@ -21,7 +21,7 @@
 
 #include <QWidget>
 
-class Square : public QWidget
+class Square: public QWidget
 {
     Q_OBJECT
 
