@@ -17,9 +17,36 @@
 // rasimvaliullin@hotmail.com
 
 #include "square.h"
+#include "warriorSVG.h"
 
 Square::Square(QWidget *parent):
-    QWidget{parent}
-{}
+    QWidget{parent},
+    m_layout{new QGridLayout{this}},
+    m_content{new QSvgWidget{this}}
+{
+    Q_ASSERT(m_layout != nullptr);
+    Q_ASSERT(m_content != nullptr);
+
+    m_layout->setContentsMargins(0, 0, 0, 0);
+    m_layout->addWidget(m_content);
+    setWarrior('Q');
+    init(0, 1);
+}
 
 Square::~Square() {}
+
+void Square::init(int id, char type)
+{
+    m_id = id;
+
+    QPalette pal{palette()};
+    pal.setColor(QPalette::Window, type == 0 ? "#efefca" : "#deddfc");
+    setPalette(pal);
+}
+
+void Square::setWarrior(char warrior)
+{
+    Q_ASSERT(m_content != nullptr);
+
+    m_content->load(warriorSVG('n'));
+}

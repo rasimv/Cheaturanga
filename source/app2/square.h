@@ -20,6 +20,8 @@
 #define SQUARE_H
 
 #include <QWidget>
+#include <QGridLayout>
+#include <QtSvgWidgets/QSvgWidget>
 
 class Square: public QWidget
 {
@@ -28,6 +30,15 @@ class Square: public QWidget
 public:
     Square(QWidget *parent = nullptr);
     ~Square();
+
+public slots:
+    void init(int id, char type);
+    void setWarrior(char warrior);
+
+private:
+    int m_id = -1;
+    QGridLayout *m_layout = nullptr;
+    QSvgWidget *m_content = nullptr;
 };
 
 #endif // SQUARE_H

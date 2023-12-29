@@ -18,12 +18,17 @@
 
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
+#include "square.h"
 
 MainWindow::MainWindow(QWidget *parent):
     QWidget{parent},
     ui{new Ui::MainWindow}
 {
     ui->setupUi(this);
+
+    auto square = new Square{};
+    square->setGeometry(0, 0, 200, 200);
+    square->show();
 }
 
 MainWindow::~MainWindow()
