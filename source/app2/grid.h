@@ -29,7 +29,6 @@ class Grid: public QWidget
 public:
     Grid(QWidget *parent = nullptr);
 
-// protected:
     void init(int columns, int rows);
 
 private slots:

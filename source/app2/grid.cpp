@@ -22,7 +22,11 @@
 Grid::Grid(QWidget *parent):
     QWidget{parent},
     m_layout{new QGridLayout{this}}
-{}
+{
+    m_layout->setContentsMargins({});
+    m_layout->setHorizontalSpacing(0);
+    m_layout->setVerticalSpacing(0);
+}
 
 void Grid::init(int columns, int rows)
 {
@@ -34,11 +38,11 @@ void Grid::init(int columns, int rows)
         for (int j = 0; j < columns; ++j)
         {
             const auto square = new Square{this};
+            square->init(j + i * columns);
 
             connect(square, &Square::down, this, &Grid::onDown);
 
             m_layout->addWidget(square, i, j);
-            square->setWarrior('N');
         }
 }
 

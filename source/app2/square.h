@@ -42,7 +42,9 @@ signals:
     void down(const QByteArray &d);
 
 public slots:
-    void init(int id, char type);
+    void init(int id);
+    int id() const;
+
     void setWarrior(char warrior);
 
 protected:
@@ -54,6 +56,7 @@ private:
     QByteArray mouseData(DownCode code, QMouseEvent *event);
 
     int m_id = -1;
+
     QGridLayout *m_layout = nullptr;
     QSvgWidget *m_content = nullptr;
 };

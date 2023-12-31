@@ -28,22 +28,21 @@ Square::Square(QWidget *parent):
     Q_ASSERT(m_layout != nullptr);
     Q_ASSERT(m_content != nullptr);
 
-    m_layout->setContentsMargins(0, 0, 0, 0);
-    m_layout->addWidget(m_content);
+    m_layout->setContentsMargins({});
+    m_layout->setHorizontalSpacing(0);
+    m_layout->setVerticalSpacing(0);
 
-    init(0, 1);
+    m_layout->addWidget(m_content);
 }
 
 Square::~Square() {}
 
-void Square::init(int id, char type)
+void Square::init(int id)
 {
     m_id = id;
-
-    QPalette pal{palette()};
-    pal.setColor(QPalette::Window, type == 0 ? "#efefca" : "#deddfc");
-    setPalette(pal);
 }
+
+int Square::id() const { return m_id; }
 
 void Square::setWarrior(char warrior)
 {
