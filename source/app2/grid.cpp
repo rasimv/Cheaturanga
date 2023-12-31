@@ -16,22 +16,40 @@
 
 // rasimvaliullin@hotmail.com
 
-#include "mainwindow.h"
-#include "./ui_mainwindow.h"
 #include "grid.h"
+#include "square.h"
 
-MainWindow::MainWindow(QWidget *parent):
+Grid::Grid(QWidget *parent):
     QWidget{parent},
-    ui{new Ui::MainWindow}
-{
-    ui->setupUi(this);
+    m_layout{new QGridLayout{this}}
+{}
 
-    const auto grid = new Grid{this};
-    grid->setGeometry(10, 10, 400, 400);
-    grid->init(3, 3);
+void Grid::init(int columns, int rows)
+{
+    Q_ASSERT(m_layout != nullptr);
+    Q_ASSERT(columns > 0 && rows > 0);
+    Q_ASSERT(m_layout->count() == 0);
+
+    for (int i = 0; i < rows; ++i)
+        for (int j = 0; j < columns; ++j)
+        {
+            const auto square = new Square{this};
+
+            connect(square, &Square::down, this, &Grid::onDown);
+
+            m_layout->addWidget(square, i, j);
+            square->setWarrior('N');
+        }
 }
 
-MainWindow::~MainWindow()
+void Grid::onDown(const QByteArray &d)
 {
-    delete ui;
+    QByteArray l{d};
+    QDataStream ds{&l, QIODeviceBase::ReadOnly};
+    int id = -1;
+    Square::DownCode code;
+    QPointF p;
+    ds >> id >> code >> p;
+
+    qDebug() << p.x() << " | " << p.y();
 }

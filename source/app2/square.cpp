@@ -18,6 +18,7 @@
 
 #include "square.h"
 #include "warriorSVG.h"
+#include <QMouseEvent>
 
 Square::Square(QWidget *parent):
     QWidget{parent},
@@ -29,7 +30,7 @@ Square::Square(QWidget *parent):
 
     m_layout->setContentsMargins(0, 0, 0, 0);
     m_layout->addWidget(m_content);
-    setWarrior('Q');
+
     init(0, 1);
 }
 
@@ -48,5 +49,43 @@ void Square::setWarrior(char warrior)
 {
     Q_ASSERT(m_content != nullptr);
 
-    m_content->load(warriorSVG('n'));
+    m_content->load(warriorSVG(warrior));
+}
+
+void Square::mousePressEvent(QMouseEvent *event)
+{
+    Q_ASSERT(event != nullptr);
+
+    emit down(mouseData(DCMousePress, event));
+
+    event->accept();
+}
+
+void Square::mouseMoveEvent(QMouseEvent *event)
+{
+    Q_ASSERT(event != nullptr);
+
+    emit down(mouseData(DCMouseMove, event));
+
+    event->accept();
+}
+
+void Square::mouseReleaseEvent(QMouseEvent *event)
+{
+    Q_ASSERT(event != nullptr);
+
+    emit down(mouseData(DCMouseRelease, event));
+
+    event->accept();
+}
+
+QByteArray Square::mouseData(DownCode code, QMouseEvent *event)
+{
+    Q_ASSERT(event != nullptr);
+
+    QByteArray d;
+    QDataStream ds{&d, QIODeviceBase::WriteOnly};
+    ds << m_id << code << event->globalPosition();
+
+    return d;
 }

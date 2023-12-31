@@ -16,22 +16,27 @@
 
 // rasimvaliullin@hotmail.com
 
-#include "mainwindow.h"
-#include "./ui_mainwindow.h"
-#include "grid.h"
+#ifndef GRID_H
+#define GRID_H
 
-MainWindow::MainWindow(QWidget *parent):
-    QWidget{parent},
-    ui{new Ui::MainWindow}
+#include <QWidget>
+#include <QGridLayout>
+
+class Grid: public QWidget
 {
-    ui->setupUi(this);
+    Q_OBJECT
 
-    const auto grid = new Grid{this};
-    grid->setGeometry(10, 10, 400, 400);
-    grid->init(3, 3);
-}
+public:
+    Grid(QWidget *parent = nullptr);
 
-MainWindow::~MainWindow()
-{
-    delete ui;
-}
+// protected:
+    void init(int columns, int rows);
+
+private slots:
+    void onDown(const QByteArray &d);
+
+private:
+    QGridLayout *m_layout = nullptr;
+};
+
+#endif // GRID_H
