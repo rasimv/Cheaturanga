@@ -21,7 +21,7 @@
 
 #include <QWidget>
 #include <QGridLayout>
-#include <QtSvgWidgets/QSvgWidget>
+#include <QSvgRenderer>
 
 class Square: public QWidget
 {
@@ -35,34 +35,29 @@ public:
         DCMouseRelease
     };
 
-    Square(QWidget *parent = nullptr);
+    Square(QWidget *parent = nullptr, Qt::WindowFlags f = Qt::WindowFlags());
     ~Square();
 
     void init(int id);
     int id() const;
 
+    char warrior() const;
+
 public slots:
     void setBackground(QColor color, bool repaint = true);
-    void setWarrior(char warrior);
-
-signals:
-    void down(const QByteArray &d);
+    void setWarrior(char warrior, bool repaint = true);
+    void setWarriorVisible(bool visible, bool repaint = true);
 
 protected:
-    void resizeEvent(QResizeEvent *event) override;
     void paintEvent(QPaintEvent *event) override;
 
-    void mousePressEvent(QMouseEvent *event) override;
-    void mouseMoveEvent(QMouseEvent *event) override;
-    void mouseReleaseEvent(QMouseEvent *event) override;
-
 private:
-    QByteArray mouseData(DownCode code, QMouseEvent *event);
-
     int m_id = -1;
+    char m_warrior = 0;
+    bool m_warriorVisible = true;
 
-    QColor m_background;
-    QSvgWidget *m_content = nullptr;
+    QColor m_background{0, 0, 0, 0};
+    QSvgRenderer *m_svgRenderer = nullptr;
 };
 
 #endif // SQUARE_H

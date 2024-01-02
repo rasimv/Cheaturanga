@@ -17,11 +17,15 @@
 // rasimvaliullin@hotmail.com
 
 #include "grid.h"
+#include <QMouseEvent>
 
 Grid::Grid(QWidget *parent):
     QWidget{parent},
-    m_layout{new QGridLayout{this}}
+    m_layout{new QGridLayout{this}},
+    m_dragged{new Square{this, Qt::Window | Qt::FramelessWindowHint | Qt::Tool}}
 {
+    Q_ASSERT(m_layout != nullptr);
+
     m_layout->setContentsMargins({});
     m_layout->setHorizontalSpacing(0);
     m_layout->setVerticalSpacing(0);
@@ -37,14 +41,10 @@ void Grid::init(int columns, int rows)
         for (int j = 0; j < columns; ++j)
         {
             const auto square = new Square{this};
-
             square->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+            m_layout->addWidget(square, i, j);
 
             square->init(j + i * columns);
-
-            connect(square, &Square::down, this, &Grid::onDown);
-
-            m_layout->addWidget(square, i, j);
         }
 }
 
@@ -94,14 +94,93 @@ void Grid::flip()
         }
 }
 
-void Grid::onDown(const QByteArray &d)
+void Grid::mousePressEvent(QMouseEvent *event)
 {
-    QByteArray l{d};
-    QDataStream ds{&l, QIODeviceBase::ReadOnly};
-    int id = -1;
-    Square::DownCode code;
-    QPointF p;
-    ds >> id >> code >> p;
+    Q_ASSERT(event != nullptr);
+    Q_ASSERT(m_dragged != nullptr);
 
-    qDebug() << p.x() << " | " << p.y();
+    m_source = squareByPosition(event->pos());
+    if (m_source != nullptr && m_source->warrior() != 0)
+    {
+        const QPointF squareSize(m_source->width(), m_source->height());
+        const QRectF g{event->globalPosition() - squareSize / 1.8,
+                       event->globalPosition() + squareSize / 1.8};
+
+        m_dragged->setGeometry(g.toRect());
+        m_dragged->setWarrior(m_source->warrior());
+        m_dragged->setVisible(true);
+
+        m_source->setWarriorVisible(false);
+
+        event->accept();
+        return;
+    }
+
+    QWidget::mousePressEvent(event);
+}
+
+void Grid::mouseMoveEvent(QMouseEvent *event)
+{
+    Q_ASSERT(event != nullptr);
+    Q_ASSERT(m_dragged != nullptr);
+
+    if (m_source != nullptr)
+    {
+        const QPointF squareSize(m_dragged->width(), m_dragged->height());
+        const QRectF g{event->globalPosition() - squareSize / 2,
+                       event->globalPosition() + squareSize / 2};
+
+        m_dragged->setGeometry(g.toRect());
+
+        event->accept();
+        return;
+    }
+
+    QWidget::mouseMoveEvent(event);
+}
+
+void Grid::mouseReleaseEvent(QMouseEvent *event)
+{
+    Q_ASSERT(event != nullptr);
+    Q_ASSERT(m_dragged != nullptr);
+
+    if (m_source != nullptr)
+    {
+        m_dragged->setVisible(false);
+
+        const auto target = squareByPosition(event->pos());
+        if (target != nullptr && m_source != target)
+        {
+            target->setWarrior(m_source->warrior());
+            m_source->setWarrior(0);
+        }
+
+        m_source->setWarriorVisible(true);
+        m_source = nullptr;
+
+        event->accept();
+        return;
+    }
+
+    event->accept();
+}
+
+Square *Grid::squareByPosition(const QPointF &pos, int *column, int *row)
+{
+    for (int i = 0; i < rowCount(); ++i)
+        for (int j = 0; j < columnCount(); ++j)
+        {
+            const auto s = square(j, i);
+
+            Q_ASSERT(s != nullptr);
+
+            if (s->geometry().contains(pos.toPoint()))
+            {
+                if (column != nullptr) *column = j;
+                if (row != nullptr) *row= i;
+                return s;
+            }
+        }
+
+    return nullptr;
 }

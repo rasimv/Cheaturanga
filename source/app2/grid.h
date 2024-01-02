@@ -40,11 +40,18 @@ public:
 public slots:
     void flip();
 
-private slots:
-    void onDown(const QByteArray &d);
+protected:
+    void mousePressEvent(QMouseEvent *event) override;
+    void mouseMoveEvent(QMouseEvent *event) override;
+    void mouseReleaseEvent(QMouseEvent *event) override;
 
 private:
+    Square *squareByPosition(const QPointF &global, int *column = nullptr, int *row = nullptr);
+
     QGridLayout *m_layout = nullptr;
+    Square *m_dragged = nullptr;
+
+    Square *m_source = nullptr;
 };
 
 #endif // GRID_H

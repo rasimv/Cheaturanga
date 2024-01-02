@@ -18,13 +18,14 @@
 
 #include "square.h"
 #include "warriorSVG.h"
-#include <QMouseEvent>
 #include <QPainter>
 
-Square::Square(QWidget *parent):
-    QWidget{parent},
-    m_content{new QSvgWidget{this}}
-{}
+Square::Square(QWidget *parent, Qt::WindowFlags f):
+    QWidget{parent, f},
+    m_svgRenderer{new QSvgRenderer{this}}
+{
+    setAttribute(Qt::WA_TranslucentBackground);
+}
 
 Square::~Square() {}
 
@@ -35,69 +36,36 @@ void Square::init(int id)
 
 int Square::id() const { return m_id; }
 
+char Square::warrior() const { return m_warrior; }
+
 void Square::setBackground(QColor color, bool repaint)
 {
     m_background = std::move(color);
     if (repaint) this->repaint();
 }
 
-void Square::setWarrior(char warrior)
+void Square::setWarrior(char warrior, bool repaint)
 {
-    Q_ASSERT(m_content != nullptr);
+    Q_ASSERT(m_svgRenderer != nullptr);
 
-    m_content->load(warriorSVG(warrior));
+    m_svgRenderer->load(warriorSVG(m_warrior = warrior));
+    if (repaint) this->repaint();
 }
 
-void Square::resizeEvent(QResizeEvent *event)
+void Square::setWarriorVisible(bool visible, bool repaint)
 {
-    Q_ASSERT(m_content != nullptr);
-
-    QWidget::resizeEvent(event);
-    m_content->setGeometry(0, 0, width(), height());
+    m_warriorVisible = visible;
+    if (repaint) this->repaint();
 }
 
 void Square::paintEvent(QPaintEvent *)
 {
+    Q_ASSERT(m_svgRenderer != nullptr);
+
     QPainter p{this};
     p.setPen(m_background);
     p.setBrush(m_background);
     p.drawRect(0, 0, width(), height());
-}
 
-void Square::mousePressEvent(QMouseEvent *event)
-{
-    Q_ASSERT(event != nullptr);
-
-    emit down(mouseData(DCMousePress, event));
-
-    event->accept();
-}
-
-void Square::mouseMoveEvent(QMouseEvent *event)
-{
-    Q_ASSERT(event != nullptr);
-
-    emit down(mouseData(DCMouseMove, event));
-
-    event->accept();
-}
-
-void Square::mouseReleaseEvent(QMouseEvent *event)
-{
-    Q_ASSERT(event != nullptr);
-
-    emit down(mouseData(DCMouseRelease, event));
-
-    event->accept();
-}
-
-QByteArray Square::mouseData(DownCode code, QMouseEvent *event)
-{
-    Q_ASSERT(event != nullptr);
-
-    QByteArray d;
-    QDataStream ds{&d, QIODeviceBase::WriteOnly};
-    ds << m_id << code << event->globalPosition();
-
-    return d;
+    if (m_warriorVisible) m_svgRenderer->render(&p);
 }
