@@ -23,6 +23,7 @@
 #include <QGridLayout>
 #include "grid.h"
 #include "labels.h"
+#include <QCheckBox>
 
 class Board: public QWidget
 {
@@ -33,12 +34,16 @@ public:
 
     void init();
 
+public slots:
+    void flip();
+
 private:
     void setupGrid();
 
     QGridLayout *m_layout = nullptr;
     Grid *m_grid = nullptr;
     Labels *m_hor = nullptr, *m_vert = nullptr;
+    QCheckBox *m_flip = nullptr;
 };
 
 #endif // BOARD_H

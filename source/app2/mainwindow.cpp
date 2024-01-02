@@ -44,7 +44,7 @@ void MainWindow::resizeEvent(QResizeEvent *event)
 {
     QWidget::resizeEvent(event);
     auto geom{board->geometry()};
-    geom.setWidth(width() / 1.5);
-    geom.setHeight(height() / 1.1);
+    geom.setWidth(width() / 1.8);
+    geom.setHeight(height() / 1.5);
     board->setGeometry(geom);
 }
