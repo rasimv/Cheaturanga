@@ -38,16 +38,20 @@ public:
     Square(QWidget *parent = nullptr);
     ~Square();
 
-signals:
-    void down(const QByteArray &d);
-
-public slots:
     void init(int id);
     int id() const;
 
+public slots:
+    void setBackground(QColor color, bool repaint = true);
     void setWarrior(char warrior);
 
+signals:
+    void down(const QByteArray &d);
+
 protected:
+    void resizeEvent(QResizeEvent *event) override;
+    void paintEvent(QPaintEvent *event) override;
+
     void mousePressEvent(QMouseEvent *event) override;
     void mouseMoveEvent(QMouseEvent *event) override;
     void mouseReleaseEvent(QMouseEvent *event) override;
@@ -57,7 +61,7 @@ private:
 
     int m_id = -1;
 
-    QGridLayout *m_layout = nullptr;
+    QColor m_background;
     QSvgWidget *m_content = nullptr;
 };
 

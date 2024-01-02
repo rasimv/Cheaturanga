@@ -19,21 +19,12 @@
 #include "square.h"
 #include "warriorSVG.h"
 #include <QMouseEvent>
+#include <QPainter>
 
 Square::Square(QWidget *parent):
     QWidget{parent},
-    m_layout{new QGridLayout{this}},
     m_content{new QSvgWidget{this}}
-{
-    Q_ASSERT(m_layout != nullptr);
-    Q_ASSERT(m_content != nullptr);
-
-    m_layout->setContentsMargins({});
-    m_layout->setHorizontalSpacing(0);
-    m_layout->setVerticalSpacing(0);
-
-    m_layout->addWidget(m_content);
-}
+{}
 
 Square::~Square() {}
 
@@ -44,11 +35,33 @@ void Square::init(int id)
 
 int Square::id() const { return m_id; }
 
+void Square::setBackground(QColor color, bool repaint)
+{
+    m_background = std::move(color);
+    if (repaint) this->repaint();
+}
+
 void Square::setWarrior(char warrior)
 {
     Q_ASSERT(m_content != nullptr);
 
     m_content->load(warriorSVG(warrior));
+}
+
+void Square::resizeEvent(QResizeEvent *event)
+{
+    Q_ASSERT(m_content != nullptr);
+
+    QWidget::resizeEvent(event);
+    m_content->setGeometry(0, 0, width(), height());
+}
+
+void Square::paintEvent(QPaintEvent *)
+{
+    QPainter p{this};
+    p.setPen(m_background);
+    p.setBrush(m_background);
+    p.drawRect(0, 0, width(), height());
 }
 
 void Square::mousePressEvent(QMouseEvent *event)

@@ -18,20 +18,33 @@
 
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
-#include "grid.h"
+#include "board.h"
+#include <QTimer>
 
 MainWindow::MainWindow(QWidget *parent):
     QWidget{parent},
-    ui{new Ui::MainWindow}
+    ui{new Ui::MainWindow},
+    board{new Board{this}}
 {
     ui->setupUi(this);
 
-    const auto grid = new Grid{this};
-    grid->setGeometry(10, 10, 400, 400);
-    grid->init(3, 3);
+    board->setGeometry(10, 10, 500, 500);
+
+    QTimer::singleShot(100, [&](){
+        board->init();
+    });
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::resizeEvent(QResizeEvent *event)
+{
+    QWidget::resizeEvent(event);
+    auto geom{board->geometry()};
+    geom.setWidth(width() / 1.5);
+    geom.setHeight(height() / 1.5);
+    board->setGeometry(geom);
 }

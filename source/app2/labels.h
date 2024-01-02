@@ -1,5 +1,5 @@
 // Cheaturanga. A simple dice-chess program
-// Copyright (C) 2023  Rasim Valiullin
+// Copyright (C) 2024  Rasim Valiullin
 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,35 +16,26 @@
 
 // rasimvaliullin@hotmail.com
 
-#ifndef GRID_H
-#define GRID_H
+#ifndef LABELS_H
+#define LABELS_H
 
 #include <QWidget>
 #include <QGridLayout>
-#include "square.h"
 
-class Grid: public QWidget
+class Labels: public QWidget
 {
     Q_OBJECT
 
 public:
-    Grid(QWidget *parent = nullptr);
+    Labels(QWidget *parent = nullptr);
 
-    void init(int columns, int rows);
-
-    int columnCount() const;
-    int rowCount() const;
-
-    Square *square(int col, int row);
+    void init(Qt::Orientation ori);
 
 public slots:
     void flip();
-
-private slots:
-    void onDown(const QByteArray &d);
 
 private:
     QGridLayout *m_layout = nullptr;
 };
 
-#endif // GRID_H
+#endif // LABELS_H

@@ -20,6 +20,7 @@
 #define MAINWINDOW_H
 
 #include <QWidget>
+#include "board.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -34,7 +35,10 @@ public:
     ~MainWindow();
 
 private:
+    void resizeEvent(QResizeEvent *event);
+
     Ui::MainWindow *ui;
+    Board *board = nullptr;
 };
 
 #endif // MAINWINDOW_H
