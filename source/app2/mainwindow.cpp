@@ -18,20 +18,23 @@
 
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
-#include "board.h"
 #include <QTimer>
 
 MainWindow::MainWindow(QWidget *parent):
     QWidget{parent},
     ui{new Ui::MainWindow},
-    board{new Board{this}}
+    m_board{new Board{this}},
+    m_warriorPanel{new WarriorPanel{this}}
 {
+    Q_ASSERT(m_board != nullptr && m_warriorPanel != nullptr);
     ui->setupUi(this);
 
-    board->setGeometry(10, 10, 500, 500);
+    m_board->setGeometry(10, 10, 500, 500);
+    m_warriorPanel->setGeometry(550, 10, 210, 140);
 
     QTimer::singleShot(100, [&](){
-        board->init();
+        m_board->init();
+        m_warriorPanel->init();
     });
 }
 
@@ -43,8 +46,8 @@ MainWindow::~MainWindow()
 void MainWindow::resizeEvent(QResizeEvent *event)
 {
     QWidget::resizeEvent(event);
-    auto geom{board->geometry()};
+    auto geom{m_board->geometry()};
     geom.setWidth(width() / 1.8);
     geom.setHeight(height() / 1.5);
-    board->setGeometry(geom);
+    m_board->setGeometry(geom);
 }

@@ -17,7 +17,7 @@
 // rasimvaliullin@hotmail.com
 
 #include "square.h"
-#include "warriorSVG.h"
+#include "warriorsvg.h"
 #include <QPainter>
 
 Square::Square(QWidget *parent, Qt::WindowFlags f):

@@ -19,10 +19,11 @@
 #include "grid.h"
 #include <QMouseEvent>
 
-Grid::Grid(QWidget *parent):
+Grid::Grid(QWidget *parent, Flags flags):
     QWidget{parent},
     m_layout{new QGridLayout{this}},
-    m_dragged{new Square{this, Qt::Window | Qt::FramelessWindowHint | Qt::Tool}}
+    m_dragged{new Square{this, Qt::Window | Qt::FramelessWindowHint | Qt::Tool}},
+    m_flags{flags}
 {
     Q_ASSERT(m_layout != nullptr);
 
@@ -99,6 +100,12 @@ void Grid::mousePressEvent(QMouseEvent *event)
     Q_ASSERT(event != nullptr);
     Q_ASSERT(m_dragged != nullptr);
 
+    if (m_source != nullptr || event->buttons() != Qt::LeftButton)
+    {
+        QWidget::mousePressEvent(event);
+        return;
+    }
+
     m_source = squareByPosition(event->pos());
     if (m_source != nullptr && m_source->warrior() != 0)
     {
@@ -110,7 +117,8 @@ void Grid::mousePressEvent(QMouseEvent *event)
         m_dragged->setWarrior(m_source->warrior());
         m_dragged->setVisible(true);
 
-        m_source->setWarriorVisible(false);
+        if (!QFlags{m_flags}.testFlag(Flags::DoNotHideSource))
+            m_source->setWarriorVisible(false);
 
         event->accept();
         return;
@@ -146,13 +154,23 @@ void Grid::mouseReleaseEvent(QMouseEvent *event)
 
     if (m_source != nullptr)
     {
+        if (QFlags{event->buttons()}.testFlag(Qt::LeftButton))
+        {
+            QWidget::mousePressEvent(event);
+            return;
+        }
+
         m_dragged->setVisible(false);
 
-        const auto target = squareByPosition(event->pos());
-        if (target != nullptr && m_source != target)
+        if (QFlags{m_flags}.testFlag(Flags::DisableInternalMove));
+        else
         {
-            target->setWarrior(m_source->warrior());
-            m_source->setWarrior(0);
+            const auto target = squareByPosition(event->pos());
+            if (target != nullptr && m_source != target)
+            {
+                target->setWarrior(m_source->warrior());
+                m_source->setWarrior(0);
+            }
         }
 
         m_source->setWarriorVisible(true);

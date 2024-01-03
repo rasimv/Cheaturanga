@@ -28,7 +28,14 @@ class Grid: public QWidget
     Q_OBJECT
 
 public:
-    Grid(QWidget *parent = nullptr);
+    enum struct Flags
+    {
+        DoNotHideSource = 1,
+        DisableInternalMove = 2,
+        DoNotHideSourceAndDisableInternalMove = DoNotHideSource | DisableInternalMove
+    };
+
+    Grid(QWidget *parent = nullptr, Flags flags = {});
 
     void init(int columns, int rows);
 
@@ -50,6 +57,7 @@ private:
 
     QGridLayout *m_layout = nullptr;
     Square *m_dragged = nullptr;
+    Flags m_flags{};
 
     Square *m_source = nullptr;
 };

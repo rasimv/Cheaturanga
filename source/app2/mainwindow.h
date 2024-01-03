@@ -21,6 +21,7 @@
 
 #include <QWidget>
 #include "board.h"
+#include "warriorpanel.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -38,7 +39,10 @@ private:
     void resizeEvent(QResizeEvent *event);
 
     Ui::MainWindow *ui;
-    Board *board = nullptr;
+
+    Board *m_board = nullptr;
+    WarriorPanel *m_warriorPanel = nullptr;
+
 };
 
 #endif // MAINWINDOW_H
