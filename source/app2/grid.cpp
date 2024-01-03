@@ -106,9 +106,11 @@ void Grid::mousePressEvent(QMouseEvent *event)
         return;
     }
 
-    m_source = squareByPosition(event->pos());
-    if (m_source != nullptr && m_source->warrior() != 0)
+    const auto source = squareByPosition(event->pos());
+    if (source != nullptr && source->warrior() != 0)
     {
+        m_source = source;
+
         const QPointF squareSize(m_source->width(), m_source->height());
         const QRectF g{event->globalPosition() - squareSize / 1.8,
                        event->globalPosition() + squareSize / 1.8};
@@ -166,6 +168,10 @@ void Grid::mouseReleaseEvent(QMouseEvent *event)
         else
         {
             const auto target = squareByPosition(event->pos());
+            if (target == nullptr &&
+                QFlags{m_flags}.testFlag(Flags::DiscardWhenDroppedOutside))
+                m_source->setWarrior(0);
+
             if (target != nullptr && m_source != target)
             {
                 target->setWarrior(m_source->warrior());

@@ -27,8 +27,14 @@ namespace
     {
         static const QString subpath{"D:/development/Cheaturanga/source/app2/images/"};
 
-        QFile file{subpath + QString{warrior}.toLower() +
-                                                    (warrior < 'a' ? '1' : '2') + ".svg"};
+        if (!std::isalnum(warrior)) return {};
+
+        const auto filepath{subpath + QString{warrior}.toLower() +
+                            (warrior < 'a' ? '1' : '2') + ".svg"};
+
+        if (!QFile::exists(filepath)) return {};
+
+        QFile file{filepath};
 
         return file.open(QIODeviceBase::ReadOnly) ? file.readAll() : QByteArray{};
     }

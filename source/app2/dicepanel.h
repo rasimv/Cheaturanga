@@ -16,38 +16,26 @@
 
 // rasimvaliullin@hotmail.com
 
-#ifndef BOARD_H
-#define BOARD_H
+#ifndef DICEPANEL_H
+#define DICEPANEL_H
 
 #include <QWidget>
-#include <QGridLayout>
 #include "grid.h"
-#include "labels.h"
-#include <QCheckBox>
 
-class Board: public QWidget
+class DicePanel: public QWidget
 {
     Q_OBJECT
 
 public:
-    Board(QWidget *parent = nullptr);
+    DicePanel(QWidget *parent = nullptr);
 
     void init();
-
-public slots:
-    void flip();
-
-protected:
-    bool hasHeightForWidth() const override;
-    int heightForWidth(int w) const override;
 
 private:
     void setupGrid();
 
     QGridLayout *m_layout = nullptr;
     Grid *m_grid = nullptr;
-    Labels *m_hor = nullptr, *m_vert = nullptr;
-    QCheckBox *m_flip = nullptr;
 };
 
-#endif // BOARD_H
+#endif // DICEPANEL_H

@@ -16,12 +16,13 @@
 
 // rasimvaliullin@hotmail.com
 
-#include "warriorpanel.h"
+#include "dicepanel.h"
+#include <QPainter>
 
-WarriorPanel::WarriorPanel(QWidget *parent):
+DicePanel::DicePanel(QWidget *parent):
     QWidget{parent},
     m_layout{new QGridLayout{this}},
-    m_grid{new Grid{this, Grid::Flags::DoNotHideSourceAndDisableInternalMove}}
+    m_grid{new Grid{this, Grid::Flags::DiscardWhenDroppedOutside}}
 {
     Q_ASSERT(m_layout != nullptr && m_grid != nullptr);
 
@@ -34,37 +35,26 @@ WarriorPanel::WarriorPanel(QWidget *parent):
     m_layout->addWidget(m_grid, 0, 0);
 }
 
-void WarriorPanel::init()
+void DicePanel::init()
 {
     setupGrid();
 }
 
-void WarriorPanel::setSide(char warrior)
-{
-    Q_ASSERT(m_grid != nullptr);
-    Q_ASSERT(m_grid->columnCount() == 3 && m_grid->rowCount() == 2);
-
-    for (int i = 0; i < m_grid->rowCount() * m_grid->columnCount(); ++i)
-        m_grid->square(i % m_grid->columnCount(), i / m_grid->columnCount())->
-            setWarrior((warrior < 'a' ? "PNBRQK" : "pnbrqk")[i]);
-}
-
-void WarriorPanel::setupGrid()
+void DicePanel::setupGrid()
 {
     Q_ASSERT(m_grid != nullptr);
 
-    m_grid->init(3, 2);
+    m_grid->init(3, 1);
     m_grid->update();
 
-    for (int i = 0; i < m_grid->rowCount(); ++i)
-        for (int j = 0; j < m_grid->columnCount(); ++j)
-        {
-            const auto s = m_grid->square(j, i);
+    for (int j = 0; j < m_grid->columnCount(); ++j)
+    {
+        const auto s = m_grid->square(j, 0);
 
-            Q_ASSERT(s != nullptr);
+        Q_ASSERT(s != nullptr);
 
-            s->setBackground(0xd8d8d8);
-        }
+        s->setBackground(j == 1 ? 0xd8d8d8 : 0xc8c8c8);
 
-    setSide('K');
+        s->setWarrior('K');
+    }
 }

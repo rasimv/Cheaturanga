@@ -32,7 +32,8 @@ public:
     {
         DoNotHideSource = 1,
         DisableInternalMove = 2,
-        DoNotHideSourceAndDisableInternalMove = DoNotHideSource | DisableInternalMove
+        DoNotHideSourceAndDisableInternalMove = DoNotHideSource | DisableInternalMove,
+        DiscardWhenDroppedOutside = 4
     };
 
     Grid(QWidget *parent = nullptr, Flags flags = {});

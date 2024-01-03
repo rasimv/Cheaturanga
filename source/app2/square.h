@@ -28,13 +28,6 @@ class Square: public QWidget
     Q_OBJECT
 
 public:
-    enum DownCode
-    {
-        DCMousePress,
-        DCMouseMove,
-        DCMouseRelease
-    };
-
     Square(QWidget *parent = nullptr, Qt::WindowFlags f = Qt::WindowFlags());
     ~Square();
 

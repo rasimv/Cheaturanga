@@ -69,6 +69,10 @@ void Board::flip()
     m_vert->flip();
 }
 
+bool Board::hasHeightForWidth() const { return QWidget::hasHeightForWidth(); }
+
+int Board::heightForWidth(int w) const { return QWidget::heightForWidth(w); }
+
 void Board::setupGrid()
 {
     Q_ASSERT(m_grid != nullptr);
@@ -83,7 +87,7 @@ void Board::setupGrid()
 
             Q_ASSERT(s != nullptr);
 
-            s->setBackground((j + i) % 2 == 0 ? "#efefca" : "#fcdddd");
+            s->setBackground((j + i) % 2 == 0 ? 0xefefca : 0xfcdddd);
         }
 
     m_grid->square(3, 5)->setWarrior('Q');

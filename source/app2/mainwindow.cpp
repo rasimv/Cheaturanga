@@ -24,17 +24,22 @@ MainWindow::MainWindow(QWidget *parent):
     QWidget{parent},
     ui{new Ui::MainWindow},
     m_board{new Board{this}},
-    m_warriorPanel{new WarriorPanel{this}}
+    m_warriorPanel{new WarriorPanel{this}},
+    m_dicePanel{new DicePanel{this}}
 {
-    Q_ASSERT(m_board != nullptr && m_warriorPanel != nullptr);
+    Q_ASSERT(m_board != nullptr);
+    Q_ASSERT(m_warriorPanel != nullptr && m_dicePanel != nullptr);
+
     ui->setupUi(this);
 
-    m_board->setGeometry(10, 10, 500, 500);
-    m_warriorPanel->setGeometry(550, 10, 210, 140);
+    m_board->setGeometry(10, 10, 650, 650);
+    m_warriorPanel->setGeometry(680, 250, 3 * 78, 2 * 78);
+    m_dicePanel->setGeometry(680, 420, 3 * 78, 78);
 
     QTimer::singleShot(100, [&](){
         m_board->init();
         m_warriorPanel->init();
+        m_dicePanel->init();
     });
 }
 
@@ -46,8 +51,9 @@ MainWindow::~MainWindow()
 void MainWindow::resizeEvent(QResizeEvent *event)
 {
     QWidget::resizeEvent(event);
-    auto geom{m_board->geometry()};
+
+    /*auto geom{m_board->geometry()};
     geom.setWidth(width() / 1.8);
     geom.setHeight(height() / 1.5);
-    m_board->setGeometry(geom);
+    m_board->setGeometry(geom);*/
 }
