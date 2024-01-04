@@ -154,18 +154,11 @@ void Grid::mouseReleaseEvent(QMouseEvent *event)
     Q_ASSERT(event != nullptr);
     Q_ASSERT(m_dragged != nullptr);
 
-    if (m_source != nullptr)
+    if (m_source != nullptr && !QFlags{event->buttons()}.testFlag(Qt::LeftButton))
     {
-        if (QFlags{event->buttons()}.testFlag(Qt::LeftButton))
-        {
-            QWidget::mousePressEvent(event);
-            return;
-        }
-
         m_dragged->setVisible(false);
 
-        if (QFlags{m_flags}.testFlag(Flags::DisableInternalMove));
-        else
+        if (!QFlags{m_flags}.testFlag(Flags::DisableInternalMove))
         {
             const auto target = squareByPosition(event->pos());
             if (target == nullptr &&
@@ -186,7 +179,7 @@ void Grid::mouseReleaseEvent(QMouseEvent *event)
         return;
     }
 
-    event->accept();
+    QWidget::mouseReleaseEvent(event);
 }
 
 Square *Grid::squareByPosition(const QPointF &pos, int *column, int *row)
