@@ -40,6 +40,18 @@ void DicePanel::init()
     setupGrid();
 }
 
+void DicePanel::onDropped(const DropInfo &info)
+{
+    Q_ASSERT(m_grid != nullptr);
+
+    const auto parentPos{parentWidget()->mapFromGlobal(info.global)};
+    if (!geometry().toRectF().contains(parentPos)) return;
+
+    const auto gridPos{m_grid->mapFromGlobal(info.global)};
+    const auto s = m_grid->squareByPosition(gridPos);
+    if (s != nullptr) s->setWarrior(info.warrior);
+}
+
 void DicePanel::setupGrid()
 {
     Q_ASSERT(m_grid != nullptr);
@@ -54,7 +66,5 @@ void DicePanel::setupGrid()
         Q_ASSERT(s != nullptr);
 
         s->setBackground(j == 1 ? 0xd8d8d8 : 0xc8c8c8);
-
-        s->setWarrior('K');
     }
 }

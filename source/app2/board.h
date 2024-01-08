@@ -35,7 +35,9 @@ public:
     void init();
 
 public slots:
-    void flip();
+    void flipView();
+
+    void onDropped(const DropInfo &info);
 
 protected:
     bool hasHeightForWidth() const override;

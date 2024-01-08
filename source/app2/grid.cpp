@@ -37,6 +37,7 @@ void Grid::init(int columns, int rows)
     Q_ASSERT(m_layout != nullptr);
     Q_ASSERT(columns > 0 && rows > 0);
     Q_ASSERT(m_layout->count() == 0);
+    Q_ASSERT(!m_flipView);
 
     for (int i = 0; i < rows; ++i)
         for (int j = 0; j < columns; ++j)
@@ -63,21 +64,61 @@ int Grid::rowCount() const
     return m_layout->rowCount();
 }
 
-Square *Grid::square(int col, int row)
+Square *Grid::square(int col, int row, bool actual)
 {
     Q_ASSERT(m_layout != nullptr);
     Q_ASSERT(col < m_layout->columnCount() && row < m_layout->rowCount());
 
-    const auto w = m_layout->itemAtPosition(row, col)->widget();
+    const auto actualColumn = !actual && m_flipView ?
+                                  m_layout->columnCount() - col - 1 : col;
+    const auto actualRow = !actual && m_flipView ?
+                               m_layout->rowCount() - row - 1 : row;
+
+    const auto w = m_layout->
+                   itemAtPosition(actualRow, actualColumn)->widget();
     return dynamic_cast<Square *>(w);
 }
 
-void Grid::flip()
+Square *Grid::squareByPosition(const QPointF &pos,
+                               int *actualColumn, int *actualRow)
+{
+    for (int i = 0; i < rowCount(); ++i)
+        for (int j = 0; j < columnCount(); ++j)
+        {
+            const auto s = square(j, i);
+
+            Q_ASSERT(s != nullptr);
+
+            if (s->geometry().contains(pos.toPoint()))
+            {
+                if (actualColumn != nullptr) *actualColumn = j;
+                if (actualRow != nullptr) *actualRow = i;
+                return s;
+            }
+        }
+
+    return nullptr;
+}
+
+QPoint Grid::coordsFromId(int id) const
+{
+    return {id % columnCount(), id / columnCount()};
+}
+
+void Grid::flipView()
 {
     Q_ASSERT(m_layout != nullptr);
 
-    for (int i = 0; i < m_layout->rowCount() / 2; ++i)
-        for (int j = 0; j < m_layout->columnCount(); ++j)
+    m_flipView = !m_flipView;
+
+    const int outer = (m_layout->rowCount() + 1) / 2;
+    for (int i = 0; i < outer; ++i)
+    {
+        const int inner = i + 1 < outer || m_layout->rowCount() % 2 == 0 ?
+                              m_layout->columnCount() :
+                              m_layout->columnCount() / 2;
+
+        for (int j = 0; j < inner; ++j)
         {
             const auto item1 = m_layout->itemAtPosition(i, j),
                         item2 = m_layout->itemAtPosition(
@@ -93,6 +134,7 @@ void Grid::flip()
             m_layout->addItem(item1, m_layout->rowCount() - i - 1,
                                         m_layout->columnCount() - j - 1);
         }
+    }
 }
 
 void Grid::mousePressEvent(QMouseEvent *event)
@@ -158,18 +200,23 @@ void Grid::mouseReleaseEvent(QMouseEvent *event)
     {
         m_dragged->setVisible(false);
 
-        if (!QFlags{m_flags}.testFlag(Flags::DisableInternalMove))
-        {
-            const auto target = squareByPosition(event->pos());
-            if (target == nullptr &&
-                QFlags{m_flags}.testFlag(Flags::DiscardWhenDroppedOutside))
-                m_source->setWarrior(0);
+        const auto target = squareByPosition(event->pos());
 
-            if (target != nullptr && m_source != target)
-            {
-                target->setWarrior(m_source->warrior());
-                m_source->setWarrior(0);
-            }
+        const DropInfo info{coordsFromId(m_source->id()),
+            target == nullptr ? QPoint{-1, -1} : coordsFromId(target->id()),
+                            event->globalPosition(), m_source->warrior()};
+
+        emit dropped(info);
+
+        if (QFlags{m_flags}.testFlag(Flags::DiscardWhenDroppedOutside) &&
+            target == nullptr)
+            m_source->setWarrior(0, false);
+
+        if (!QFlags{m_flags}.testFlag(Flags::DisableInternalMove) &&
+            target != nullptr && m_source != target)
+        {
+            target->setWarrior(m_source->warrior());
+            m_source->setWarrior(0, false);
         }
 
         m_source->setWarriorVisible(true);
@@ -180,24 +227,4 @@ void Grid::mouseReleaseEvent(QMouseEvent *event)
     }
 
     QWidget::mouseReleaseEvent(event);
-}
-
-Square *Grid::squareByPosition(const QPointF &pos, int *column, int *row)
-{
-    for (int i = 0; i < rowCount(); ++i)
-        for (int j = 0; j < columnCount(); ++j)
-        {
-            const auto s = square(j, i);
-
-            Q_ASSERT(s != nullptr);
-
-            if (s->geometry().contains(pos.toPoint()))
-            {
-                if (column != nullptr) *column = j;
-                if (row != nullptr) *row= i;
-                return s;
-            }
-        }
-
-    return nullptr;
 }

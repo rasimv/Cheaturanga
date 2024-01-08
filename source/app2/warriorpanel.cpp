@@ -36,7 +36,12 @@ WarriorPanel::WarriorPanel(QWidget *parent):
 
 void WarriorPanel::init()
 {
+    Q_ASSERT(m_grid != nullptr);
+
     setupGrid();
+
+    connect(m_grid, &Grid::dropped, [&](const DropInfo &info)
+            { emit dropped(info); });
 }
 
 void WarriorPanel::setSide(char warrior)

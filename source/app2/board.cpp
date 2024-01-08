@@ -56,17 +56,29 @@ void Board::init()
     setupGrid();
 
     m_flip->setEnabled(true);
-    QObject::connect(m_flip, &QCheckBox::stateChanged, [&]() { flip(); });
+    QObject::connect(m_flip, &QCheckBox::stateChanged, [&]() { flipView(); });
 }
 
-void Board::flip()
+void Board::flipView()
 {
     Q_ASSERT(m_hor != nullptr && m_vert != nullptr);
     Q_ASSERT(m_grid != nullptr);
 
-    m_grid->flip();
-    m_hor->flip();
-    m_vert->flip();
+    m_grid->flipView();
+    m_hor->flipView();
+    m_vert->flipView();
+}
+
+void Board::onDropped(const DropInfo &info)
+{
+    Q_ASSERT(m_grid != nullptr);
+
+    const auto parentPos{parentWidget()->mapFromGlobal(info.global)};
+    if (!geometry().toRectF().contains(parentPos)) return;
+
+    const auto gridPos{m_grid->mapFromGlobal(info.global)};
+    const auto s = m_grid->squareByPosition(gridPos);
+    if (s != nullptr) s->setWarrior(info.warrior);
 }
 
 bool Board::hasHeightForWidth() const { return QWidget::hasHeightForWidth(); }
@@ -88,8 +100,7 @@ void Board::setupGrid()
             Q_ASSERT(s != nullptr);
 
             s->setBackground((j + i) % 2 == 0 ? 0xefefca : 0xfcdddd);
-        }
 
-    m_grid->square(3, 5)->setWarrior('Q');
-    m_grid->square(6, 2)->setWarrior('k');
+            s->setWarrior("PNBRQKpnbrqk"[(i + j) % 12]);
+        }
 }

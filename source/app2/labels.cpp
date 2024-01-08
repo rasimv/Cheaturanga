@@ -51,7 +51,7 @@ void Labels::init(Qt::Orientation ori)
     }
 }
 
-void Labels::flip()
+void Labels::flipView()
 {
     Q_ASSERT(m_layout != nullptr);
     Q_ASSERT(m_layout->columnCount() == 1 && m_layout->rowCount() == 8 ||
