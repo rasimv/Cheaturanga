@@ -31,6 +31,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         labels.h labels.cpp
         warriorpanel.cpp warriorpanel.h
         dicepanel.cpp dicepanel.h
+        dropinfo.h
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET app2 APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR

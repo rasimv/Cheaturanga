@@ -16,32 +16,17 @@
 
 // rasimvaliullin@hotmail.com
 
-#ifndef WARRIORPANEL_H
-#define WARRIORPANEL_H
+#ifndef DROPINFO_H
+#define DROPINFO_H
 
-#include <QWidget>
-#include "grid.h"
+#include <QPointF>
 
-class WarriorPanel: public QWidget
+struct DropInfo
 {
-    Q_OBJECT
-
-public:
-    WarriorPanel(QWidget *parent = nullptr);
-
-    void init();
-
-signals:
-    void dropped(const DropInfo &info);
-
-public slots:
-    void setSide(char warrior);
-
-private:
-    void setupGrid();
-
-    QGridLayout *m_layout = nullptr;
-    Grid *m_grid = nullptr;
+    QPoint sourceCoords{-1, -1};
+    QPoint targetCoords{-1, -1};
+    QPointF global;
+    char warrior = 0;
 };
 
-#endif // WARRIORPANEL_H
+#endif // DROPINFO_H

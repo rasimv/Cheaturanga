@@ -32,7 +32,7 @@ public:
     void init(Qt::Orientation ori);
 
 public slots:
-    void flip();
+    void flipView();
 
 private:
     QGridLayout *m_layout = nullptr;

@@ -22,6 +22,7 @@
 #include <QWidget>
 #include <QGridLayout>
 #include "square.h"
+#include "dropinfo.h"
 
 class Grid: public QWidget
 {
@@ -43,10 +44,18 @@ public:
     int columnCount() const;
     int rowCount() const;
 
-    Square *square(int col, int row);
+    Square *square(int col, int row, bool actual = false);
+
+    Square *squareByPosition(const QPointF &pos,
+                int *actualColumn = nullptr, int *actualRow = nullptr);
+
+    QPoint coordsFromId(int id) const;
+
+signals:
+    void dropped(const DropInfo &info);
 
 public slots:
-    void flip();
+    void flipView();
 
 protected:
     void mousePressEvent(QMouseEvent *event) override;
@@ -54,9 +63,8 @@ protected:
     void mouseReleaseEvent(QMouseEvent *event) override;
 
 private:
-    Square *squareByPosition(const QPointF &global, int *column = nullptr, int *row = nullptr);
-
     QGridLayout *m_layout = nullptr;
+    bool m_flipView = false;
     Square *m_dragged = nullptr;
     Flags m_flags{};
 

@@ -35,7 +35,7 @@ public:
     void init();
 
 public slots:
-    void flip();
+    void flipView();
 
 protected:
     bool hasHeightForWidth() const override;

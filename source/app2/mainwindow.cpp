@@ -40,6 +40,9 @@ MainWindow::MainWindow(QWidget *parent):
         m_board->init();
         m_warriorPanel->init();
         m_dicePanel->init();
+
+        QObject::connect(m_warriorPanel, &WarriorPanel::dropped,
+                         m_dicePanel, &DicePanel::onDropped);
     });
 }
 

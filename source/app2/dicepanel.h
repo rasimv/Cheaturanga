@@ -31,6 +31,9 @@ public:
 
     void init();
 
+public slots:
+    void onDropped(const DropInfo &info);
+
 private:
     void setupGrid();
 
