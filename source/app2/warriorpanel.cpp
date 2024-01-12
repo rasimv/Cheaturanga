@@ -20,18 +20,19 @@
 
 WarriorPanel::WarriorPanel(QWidget *parent):
     QWidget{parent},
-    m_layout{new QGridLayout{this}},
     m_grid{new Grid{this, Grid::Flags::DoNotHideSourceAndDisableInternalMove}}
 {
-    Q_ASSERT(m_layout != nullptr && m_grid != nullptr);
+    Q_ASSERT(m_grid != nullptr);
 
-    m_layout->setContentsMargins({});
-    m_layout->setHorizontalSpacing(0);
-    m_layout->setVerticalSpacing(0);
+    const auto layout = new QGridLayout{this};
+
+    layout->setContentsMargins({});
+    layout->setHorizontalSpacing(0);
+    layout->setVerticalSpacing(0);
 
     m_grid->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
-    m_layout->addWidget(m_grid, 0, 0);
+    layout->addWidget(m_grid, 0, 0);
 }
 
 void WarriorPanel::init()
@@ -40,8 +41,8 @@ void WarriorPanel::init()
 
     setupGrid();
 
-    connect(m_grid, &Grid::dropped, [&](const DropInfo &info)
-            { emit dropped(info); });
+    connect(m_grid, &Grid::drop, [&](const DropInfo &info)
+            { emit drop(info); });
 }
 
 void WarriorPanel::setSide(char warrior)

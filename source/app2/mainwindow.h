@@ -23,6 +23,8 @@
 #include "board.h"
 #include "warriorpanel.h"
 #include "dicepanel.h"
+#include "log.h"
+#include "controller.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -37,6 +39,10 @@ public:
     ~MainWindow();
 
 private:
+    void init();
+    void start();
+    void subInit();
+
     void resizeEvent(QResizeEvent *event);
 
     Ui::MainWindow *ui = nullptr;
@@ -44,6 +50,9 @@ private:
     Board *m_board = nullptr;
     WarriorPanel *m_warriorPanel = nullptr;
     DicePanel *m_dicePanel = nullptr;
+    Log *m_log = nullptr;
+
+    Controller *m_controller = nullptr;
 };
 
 #endif // MAINWINDOW_H

@@ -16,34 +16,39 @@
 
 // rasimvaliullin@hotmail.com
 
-#ifndef DICEPANEL_H
-#define DICEPANEL_H
+#ifndef CONTROLLER_H
+#define CONTROLLER_H
 
-#include <QWidget>
-#include "grid.h"
-#include "constants.h"
+#include <QObject>
+#include <QProcess>
+#include <QTimer>
 
-class DicePanel: public QWidget
+class Controller: public QObject
 {
     Q_OBJECT
 
 public:
-    DicePanel(QWidget *parent = nullptr);
+    explicit Controller(QObject *parent = nullptr);
 
     void init();
+    void start();
 
 signals:
-    void submitDice(const QString &dice);
+    void log(const QStringList &piece);
+    void toss(const QString &dice);
 
 public slots:
-    void drop(const DropInfo &info);
-    void set(const QString &dice);
-    void submit();
+    void submitDice(const QString &dice);
+
+private slots:
+    void outputReady();
 
 private:
-    void setupGrid();
+    QProcess *m_engine = nullptr;
+    QByteArray m_rawQueue;
+    QStringList m_queue;
 
-    Grid *m_grid = nullptr;
+    QTimer m_timer;
 };
 
-#endif // DICEPANEL_H
+#endif // CONTROLLER_H

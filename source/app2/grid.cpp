@@ -206,7 +206,7 @@ void Grid::mouseReleaseEvent(QMouseEvent *event)
             target == nullptr ? QPoint{-1, -1} : coordsFromId(target->id()),
                             event->globalPosition(), m_source->warrior()};
 
-        emit dropped(info);
+        emit drop(info);
 
         if (QFlags{m_flags}.testFlag(Flags::DiscardWhenDroppedOutside) &&
             target == nullptr)

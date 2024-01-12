@@ -25,28 +25,78 @@ MainWindow::MainWindow(QWidget *parent):
     ui{new Ui::MainWindow},
     m_board{new Board{this}},
     m_warriorPanel{new WarriorPanel{this}},
-    m_dicePanel{new DicePanel{this}}
+    m_dicePanel{new DicePanel{this}},
+    m_log{new Log{this}},
+    m_controller{new Controller{this}}
 {
     Q_ASSERT(m_board != nullptr);
-    Q_ASSERT(m_warriorPanel != nullptr && m_dicePanel != nullptr);
+    Q_ASSERT(m_warriorPanel != nullptr);
+    Q_ASSERT(m_dicePanel != nullptr);
+    Q_ASSERT(m_log != nullptr);
 
     ui->setupUi(this);
 
     m_board->setGeometry(10, 10, 650, 650);
     m_warriorPanel->setGeometry(680, 250, 3 * 78, 2 * 78);
     m_dicePanel->setGeometry(680, 420, 3 * 78, 78);
+    m_log->setGeometry(680, 10, 331, 221);
 
-    QTimer::singleShot(100, [&](){
-        m_board->init();
-        m_warriorPanel->init();
-        m_dicePanel->init();
+    init();
+    start();
+}
 
-        QObject::connect(m_warriorPanel, &WarriorPanel::dropped,
-                         m_dicePanel, &DicePanel::onDropped);
+void MainWindow::init()
+{
+    Q_ASSERT(m_board != nullptr);
+    Q_ASSERT(m_warriorPanel != nullptr);
+    Q_ASSERT(m_dicePanel != nullptr);
+    Q_ASSERT(m_log != nullptr);
+    Q_ASSERT(m_controller != nullptr);
+    Q_ASSERT(ui->pushButton_submitDice != nullptr);
 
-        QObject::connect(m_warriorPanel, &WarriorPanel::dropped,
-                         m_board, &Board::onDropped);
-    });
+    QTimer::singleShot(0, this, &MainWindow::subInit);
+}
+
+void MainWindow::start()
+{
+    Q_ASSERT(m_controller != nullptr);
+
+    QTimer::singleShot(0, [&]() { m_controller->start(); });
+}
+
+void MainWindow::subInit()
+{
+    Q_ASSERT(m_board != nullptr);
+    Q_ASSERT(m_warriorPanel != nullptr);
+    Q_ASSERT(m_dicePanel != nullptr);
+    Q_ASSERT(m_log != nullptr);
+    Q_ASSERT(m_controller != nullptr);
+
+    m_board->init();
+    m_warriorPanel->init();
+    m_dicePanel->init();
+    m_log->init();
+    m_controller->init();
+
+    QObject::connect(m_warriorPanel, &WarriorPanel::drop,
+                     m_dicePanel, &DicePanel::drop);
+
+    QObject::connect(m_warriorPanel, &WarriorPanel::drop,
+                     m_board, &Board::drop);
+
+    QObject::connect(m_controller, &Controller::log,
+                     m_log, &Log::append);
+
+    QObject::connect(m_controller, &Controller::toss,
+                     m_dicePanel, &DicePanel::set);
+
+    QObject::connect(m_dicePanel, &DicePanel::submitDice,
+                     m_controller, &Controller::submitDice);
+
+    QObject::connect(
+        ui->pushButton_submitDice, &QPushButton::clicked,
+        m_dicePanel, &DicePanel::submit
+                    );
 }
 
 MainWindow::~MainWindow()

@@ -12,6 +12,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets SvgWidgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets SvgWidgets)
 
+include_directories(${CMAKE_SOURCE_DIR}/../../include)
+
+set(CMAKE_CXX_STANDARD 20)
+
 set(PROJECT_SOURCES
         main.cpp
         mainwindow.cpp
@@ -32,6 +36,10 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         warriorpanel.cpp warriorpanel.h
         dicepanel.cpp dicepanel.h
         dropinfo.h
+        controller.h controller.cpp
+        log.cpp log.h
+        constants.h
+
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET app2 APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR

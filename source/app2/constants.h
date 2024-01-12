@@ -16,34 +16,12 @@
 
 // rasimvaliullin@hotmail.com
 
-#ifndef DICEPANEL_H
-#define DICEPANEL_H
+#ifndef CONSTANTS_H
+#define CONSTANTS_H
 
-#include <QWidget>
-#include "grid.h"
-#include "constants.h"
-
-class DicePanel: public QWidget
+namespace Const
 {
-    Q_OBJECT
+    inline static constexpr int NumberOfDice = 3;
+}
 
-public:
-    DicePanel(QWidget *parent = nullptr);
-
-    void init();
-
-signals:
-    void submitDice(const QString &dice);
-
-public slots:
-    void drop(const DropInfo &info);
-    void set(const QString &dice);
-    void submit();
-
-private:
-    void setupGrid();
-
-    Grid *m_grid = nullptr;
-};
-
-#endif // DICEPANEL_H
+#endif // CONSTANTS_H

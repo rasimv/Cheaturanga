@@ -32,7 +32,7 @@ public:
     void init();
 
 signals:
-    void dropped(const DropInfo &info);
+    void drop(const DropInfo &info);
 
 public slots:
     void setSide(char warrior);
@@ -40,7 +40,6 @@ public slots:
 private:
     void setupGrid();
 
-    QGridLayout *m_layout = nullptr;
     Grid *m_grid = nullptr;
 };
 

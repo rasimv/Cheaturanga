@@ -37,7 +37,7 @@ public:
 public slots:
     void flipView();
 
-    void onDropped(const DropInfo &info);
+    void drop(const DropInfo &info);
 
 protected:
     bool hasHeightForWidth() const override;
@@ -46,7 +46,6 @@ protected:
 private:
     void setupGrid();
 
-    QGridLayout *m_layout = nullptr;
     Grid *m_grid = nullptr;
     Labels *m_hor = nullptr, *m_vert = nullptr;
     QCheckBox *m_flip = nullptr;

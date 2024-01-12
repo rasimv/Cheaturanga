@@ -16,34 +16,27 @@
 
 // rasimvaliullin@hotmail.com
 
-#ifndef DICEPANEL_H
-#define DICEPANEL_H
+#ifndef LOG_H
+#define LOG_H
 
 #include <QWidget>
-#include "grid.h"
-#include "constants.h"
+#include <QGridLayout>
+#include <QPlainTextEdit>
 
-class DicePanel: public QWidget
+class Log: public QWidget
 {
     Q_OBJECT
 
 public:
-    DicePanel(QWidget *parent = nullptr);
+    Log(QWidget *parent = nullptr);
 
     void init();
 
-signals:
-    void submitDice(const QString &dice);
-
 public slots:
-    void drop(const DropInfo &info);
-    void set(const QString &dice);
-    void submit();
+    void append(const QStringList &piece);
 
 private:
-    void setupGrid();
-
-    Grid *m_grid = nullptr;
+    QPlainTextEdit *m_textEdit = nullptr;
 };
 
-#endif // DICEPANEL_H
+#endif // LOG_H

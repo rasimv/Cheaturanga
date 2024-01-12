@@ -17,22 +17,22 @@
 // rasimvaliullin@hotmail.com
 
 #include "dicepanel.h"
-#include <QPainter>
 
 DicePanel::DicePanel(QWidget *parent):
     QWidget{parent},
-    m_layout{new QGridLayout{this}},
     m_grid{new Grid{this, Grid::Flags::DiscardWhenDroppedOutside}}
 {
-    Q_ASSERT(m_layout != nullptr && m_grid != nullptr);
+    Q_ASSERT(m_grid != nullptr);
 
-    m_layout->setContentsMargins({});
-    m_layout->setHorizontalSpacing(0);
-    m_layout->setVerticalSpacing(0);
+    const auto layout = new QGridLayout{this};
+
+    layout->setContentsMargins({});
+    layout->setHorizontalSpacing(0);
+    layout->setVerticalSpacing(0);
 
     m_grid->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
-    m_layout->addWidget(m_grid, 0, 0);
+    layout->addWidget(m_grid, 0, 0);
 }
 
 void DicePanel::init()
@@ -40,7 +40,7 @@ void DicePanel::init()
     setupGrid();
 }
 
-void DicePanel::onDropped(const DropInfo &info)
+void DicePanel::drop(const DropInfo &info)
 {
     Q_ASSERT(m_grid != nullptr);
 
@@ -52,11 +52,46 @@ void DicePanel::onDropped(const DropInfo &info)
     if (s != nullptr) s->setWarrior(info.warrior);
 }
 
+void DicePanel::set(const QString &dice)
+{
+    Q_ASSERT(m_grid != nullptr);
+    Q_ASSERT(m_grid->columnCount() == Const::NumberOfDice);
+    Q_ASSERT(dice.size() == Const::NumberOfDice);
+
+    for (int i = 0; i < m_grid->columnCount(); ++i)
+    {
+        const auto s = m_grid->square(i, 0);
+
+        Q_ASSERT(s != nullptr);
+
+        s->setWarrior(dice[i].toLatin1());
+    }
+}
+
+void DicePanel::submit()
+{
+    Q_ASSERT(m_grid != nullptr);
+    Q_ASSERT(m_grid->columnCount() == Const::NumberOfDice);
+
+    QString dice;
+
+    for (int i = 0; i < Const::NumberOfDice; ++i)
+    {
+        const auto s = m_grid->square(i, 0);
+
+        Q_ASSERT(s != nullptr);
+
+        dice += s->warrior();
+    }
+
+    emit submitDice(dice);
+}
+
 void DicePanel::setupGrid()
 {
     Q_ASSERT(m_grid != nullptr);
 
-    m_grid->init(3, 1);
+    m_grid->init(Const::NumberOfDice, 1);
     m_grid->update();
 
     for (int j = 0; j < m_grid->columnCount(); ++j)

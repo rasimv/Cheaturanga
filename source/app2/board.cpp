@@ -20,16 +20,17 @@
 
 Board::Board(QWidget *parent):
     QWidget{parent},
-    m_layout{new QGridLayout{this}},
     m_grid{new Grid{this}},
     m_hor{new Labels{this}}, m_vert{new Labels{this}},
     m_flip{new QCheckBox{this}}
 {
-    Q_ASSERT(m_layout != nullptr && m_grid != nullptr);
+    Q_ASSERT(m_grid != nullptr);
     Q_ASSERT(m_hor != nullptr && m_hor != nullptr);
 
-    m_layout->setContentsMargins({});
-    m_layout->setVerticalSpacing(m_layout->verticalSpacing() / 2.2);
+    const auto layout = new QGridLayout{this};
+
+    layout->setContentsMargins({});
+    layout->setVerticalSpacing(layout->verticalSpacing() / 2.2);
 
     m_grid->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     m_hor->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
@@ -39,10 +40,10 @@ Board::Board(QWidget *parent):
     m_flip->setToolTip("Flip");
     m_flip->setEnabled(false);
 
-    m_layout->addWidget(m_grid, 0, 0);
-    m_layout->addWidget(m_vert, 0, 1);
-    m_layout->addWidget(m_hor, 1, 0);
-    m_layout->addWidget(m_flip, 1, 1);
+    layout->addWidget(m_grid, 0, 0);
+    layout->addWidget(m_vert, 0, 1);
+    layout->addWidget(m_hor, 1, 0);
+    layout->addWidget(m_flip, 1, 1);
 }
 
 void Board::init()
@@ -69,7 +70,7 @@ void Board::flipView()
     m_vert->flipView();
 }
 
-void Board::onDropped(const DropInfo &info)
+void Board::drop(const DropInfo &info)
 {
     Q_ASSERT(m_grid != nullptr);
 

@@ -52,7 +52,7 @@ public:
     QPoint coordsFromId(int id) const;
 
 signals:
-    void dropped(const DropInfo &info);
+    void drop(const DropInfo &info);
 
 public slots:
     void flipView();
