@@ -17,38 +17,30 @@
 // rasimvaliullin@hotmail.com
 
 #include <iostream>
-#include <cheaturanga/mechanics.hpp>
-#include <deque>
+#include "controller.hpp"
 
 void intro();
 
 int main()
 {
+	namespace Core = Cheaturanga::Core;
+
 	intro();
+	std::cout << std::endl << "--------------------------------"
+								"--------------------------------" << std::endl;
 
-	std::cout << std::endl << "ready" << std::endl;
+	Cheaturanga::Frontend::Controller controller{std::cin, std::cout};
+	controller.run();
 
-	std::deque<std::string> queue;
-
-	while (true)
-	{
-		std::string line;
-		std::getline(std::cin, line);
-
-		if (line == "quit") break;
-
-		queue.emplace_back(std::move(line));
-	}
-
-	Cheaturanga::FEN fen1{Cheaturanga::
+	Core::FEN fen1{Core::
 		decode("rnbqkbnr/ppp1p1pp/8/3pPp2/8/8/PPPP1PPP/RNBQKBNR w KQkq - 0 3")};
 
-	Cheaturanga::step(fen1.pos, [](const auto &q)
+	Core::step(fen1.pos, [](const auto &q)
 		{
 			std::cout << q.from << '\t' << q.to << std::endl;
 		});
 
-	const auto fenS{Cheaturanga::encode(fen1)};
+	const auto fenS{ Core::encode(fen1)};
 
 	return 0;
 }

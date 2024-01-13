@@ -25,7 +25,7 @@ namespace
 {
     inline QByteArray warriorSVG(char warrior)
     {
-        static const QString subpath{"D:/development/Cheaturanga/source/app2/images/"};
+        static const QString subpath{"D:/development/Cheaturanga/source/qtapp/images/"};
 
         if (!std::isalnum(warrior)) return {};
 

@@ -19,7 +19,7 @@
 #include <cassert>
 #include <sstream>
 
-namespace Cheaturanga
+namespace Cheaturanga::Core
 {
 	constexpr auto Width = 8;
 	constexpr auto Height = 8;
