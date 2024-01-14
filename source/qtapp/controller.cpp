@@ -38,7 +38,7 @@ void Controller::start()
 {
     Q_ASSERT(m_engine != nullptr);
 
-    const QFileInfo fi{QCoreApplication::applicationDirPath() + "/../../x64/Debug/cheaturanga.exe"};
+    const QFileInfo fi{QCoreApplication::applicationDirPath() + "/../../rust/cheaturanga/target/debug/cheaturanga.exe"};
 
     qDebug() << fi.canonicalFilePath();
 
