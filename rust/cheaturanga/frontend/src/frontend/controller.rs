@@ -19,16 +19,63 @@
 pub struct Controller<'a>
 {
 	input: &'a mut dyn std::io::Read,
-	output: &'a mut dyn std::io::Write
+	output: &'a mut dyn std::io::Write,
+
+	queue: std::collections::LinkedList<String>
 }
+
+type IoResultBool = Result<bool, std::io::Error>;
 
 impl<'a> Controller<'a>
 {
 	pub fn new(input: &'a mut dyn std::io::Read, output: &'a mut dyn std::io::Write) -> Self
 	{
-		Controller{input: input, output: output}
+		Controller
+			{
+				input: input,
+				output: output,
+				queue: std::collections::LinkedList::new()
+			}
 	}
 
-	pub fn run(&mut self)
-	{}
+	pub fn run(&mut self) -> IoResultBool
+	{
+		self.output_line("ready")?;
+
+		loop
+		{
+			use std::io::{BufRead, BufReader};
+			let mut reader = BufReader::new(&mut self.input);
+
+			let mut line = String::new();
+			reader.read_line(&mut line)?;
+
+			self.queue.push_back(line);
+
+			if !self.process_input()? { break }
+		}
+
+		Ok(true)
+	}
+
+	fn output_line(&mut self, string: &str) -> IoResultBool
+	{
+		self.output.write_all(string.as_bytes())?;
+		self.output.write_all("\n".as_bytes())?;
+		self.output.flush()?;
+
+		Ok(true)
+	}
+
+	fn process_input(&mut self) -> IoResultBool
+	{
+		assert!(self.queue.len() > 0);
+
+		if let Some(line) = self.queue.front()
+			{ if line == "quit\r\n" { return Ok(false); } }
+
+		self.queue.pop_front();
+
+		Ok(true)
+	}
 }
