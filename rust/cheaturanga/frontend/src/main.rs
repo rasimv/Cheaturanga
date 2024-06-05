@@ -16,6 +16,8 @@
 
 // rasimvaliullin@hotmail.com
 
+mod frontend;
+
 fn main()
 {
     notice();
@@ -23,6 +25,13 @@ fn main()
     println!("----------------------------------------------------------------");
 
     println!("{}", core1::magic(123));
+
+    let mut input = std::io::stdin();
+    let mut output = std::io::stdout();
+
+    let mut controller = frontend::Controller::new(&mut input, &mut output);
+
+    controller.run();
 }
 
 fn notice()
