@@ -16,39 +16,39 @@
 
 // rasimvaliullin@hotmail.com
 
-use crate::core1::dim;
 use crate::core1::coords;
+use crate::core1::layout;
 
 use std::ops::{Index, IndexMut};
 
 #[derive(Default, Copy, Clone, PartialEq)]
-pub struct Layout
+pub struct Position
 {
-	pub d: [[i8; dim::WIDTH_US]; dim::HEIGHT_US]
+	pub turn: i8,
+	pub layout: layout::Layout,
+	pub castle: i8,
+	pub en_passant: coords::Coords
 }
 
-impl Index<coords::Coords> for Layout
+impl Index<coords::Coords> for Position
 {
 	type Output = i8;
 
 	fn index(&self, coords: coords::Coords) -> &Self::Output
 	{
-		&self.d[coords.h as usize][coords.v as usize]
+		&self.layout[coords]
 	}
 }
 
-impl IndexMut<coords::Coords> for Layout
+impl IndexMut<coords::Coords> for Position
 {
 	fn index_mut(&mut self, coords: coords::Coords) -> &mut Self::Output
 	{
-		&mut self.d[coords.h as usize][coords.v as usize]
+		&mut self.layout[coords]
 	}
 }
 
-impl Layout
+impl Position
 {
-	fn new() -> Self
-	{
-		Layout{d: [[0; dim::WIDTH_US]; dim::HEIGHT_US]}
-	}
+	fn new() -> Self { Position::default() }
 }

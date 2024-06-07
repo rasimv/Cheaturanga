@@ -7,3 +7,7 @@ edition = "2021"
 
 [dependencies]
 core1 = {path = "../core1"}
+
+[[bin]]
+name = "cheaturanga"
+path = "src/main.rs"

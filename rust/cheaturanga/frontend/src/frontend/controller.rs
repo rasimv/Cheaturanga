@@ -88,7 +88,7 @@ impl<'a> Controller<'a>
 			Some(&"valid") => self.valid(tokens),
 			Some(&"dice") => self.dice(tokens),
 			Some(&"best") => self.best(tokens),
-			Some(&"semi") => self.semi(tokens),
+			Some(&"ply") => self.ply(tokens),
 			Some(_) => { self.output_line("wrong input")?; Ok(true) },
 			None => Ok(true)
 		}
@@ -109,5 +109,5 @@ impl<'a> Controller<'a>
 	fn valid(&mut self, _: Vec<&str>) -> IoResultBool { Ok(true) }
 	fn dice(&mut self, tokens: Vec<&str>) -> IoResultBool { Ok(true) }
 	fn best(&mut self, _: Vec<&str>) -> IoResultBool { Ok(true) }
-	fn semi(&mut self, tokens: Vec<&str>) -> IoResultBool { Ok(true) }
+	fn ply(&mut self, tokens: Vec<&str>) -> IoResultBool { Ok(true) }
 }

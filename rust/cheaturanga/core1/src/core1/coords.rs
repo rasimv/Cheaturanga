@@ -23,8 +23,8 @@ use std::ops::{Add, Sub, Neg, AddAssign, SubAssign};
 #[derive(Copy, Clone, PartialEq)]
 pub struct Coords
 {
-	h: i8,
-	v: i8
+	pub h: i8,
+	pub v: i8
 }
 
 impl Default for Coords

@@ -20,5 +20,6 @@ pub mod core1;
 pub mod dim;
 pub mod layout;
 pub mod coords;
+pub mod position;
 
 pub use core1::Core1;
