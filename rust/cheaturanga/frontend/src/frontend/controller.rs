@@ -94,23 +94,20 @@ impl<'a> Controller<'a>
 		}
 	}
 
-	fn quit(&mut self, tokens: Vec<&str>) -> IoResultBool
+	fn quit(&mut self, _: Vec<&str>) -> IoResultBool
 	{
 		let _ = self.output_line("bye");
 
 		Ok(false)
 	}
 
-	fn state(&mut self, tokens: Vec<&str>) -> IoResultBool
+	fn state(&mut self, _: Vec<&str>) -> IoResultBool
 	{
-		core1::magic(123);
-		let core1 = core1::core1::Core1{};
-
 		Ok(true)
 	}
 
-	fn valid(&mut self, tokens: Vec<&str>) -> IoResultBool { Ok(true) }
+	fn valid(&mut self, _: Vec<&str>) -> IoResultBool { Ok(true) }
 	fn dice(&mut self, tokens: Vec<&str>) -> IoResultBool { Ok(true) }
-	fn best(&mut self, tokens: Vec<&str>) -> IoResultBool { Ok(true) }
+	fn best(&mut self, _: Vec<&str>) -> IoResultBool { Ok(true) }
 	fn semi(&mut self, tokens: Vec<&str>) -> IoResultBool { Ok(true) }
 }

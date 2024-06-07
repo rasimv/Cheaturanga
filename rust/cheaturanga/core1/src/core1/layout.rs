@@ -16,9 +16,18 @@
 
 // rasimvaliullin@hotmail.com
 
-pub mod core1;
-pub mod dim;
-pub mod layout;
-pub mod coords;
+use crate::core1::dim;
 
-pub use core1::Core1;
+#[derive(Default, Copy, Clone, PartialEq)]
+struct Layout
+{
+	d: [[i8; dim::WIDTH_US]; dim::HEIGHT_US]
+}
+
+impl Layout
+{
+	fn new() -> Self
+	{
+		Layout{d: [[0; dim::WIDTH_US]; dim::HEIGHT_US]}
+	}
+}

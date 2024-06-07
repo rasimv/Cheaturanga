@@ -16,9 +16,9 @@
 
 // rasimvaliullin@hotmail.com
 
-pub struct Core1
-{
-}
+use crate::core1::coords;
+
+pub struct Core1 {}
 
 impl Core1
 {
@@ -26,4 +26,7 @@ impl Core1
 	{
 		Core1 {}
 	}
+
+	pub fn turn() -> i32
+	{ 0 }
 }

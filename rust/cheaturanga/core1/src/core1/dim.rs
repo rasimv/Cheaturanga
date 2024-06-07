@@ -16,9 +16,8 @@
 
 // rasimvaliullin@hotmail.com
 
-pub mod core1;
-pub mod dim;
-pub mod layout;
-pub mod coords;
+pub const WIDTH: i8 = 8;
+pub const HEIGHT: i8 = 8;
 
-pub use core1::Core1;
+pub const WIDTH_US: usize = WIDTH as usize;
+pub const HEIGHT_US: usize = HEIGHT as usize;
