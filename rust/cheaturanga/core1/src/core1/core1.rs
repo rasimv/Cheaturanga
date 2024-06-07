@@ -16,6 +16,14 @@
 
 // rasimvaliullin@hotmail.com
 
-pub mod core1;
+pub struct Core1
+{
+}
 
-pub fn magic(x: i32) -> i32 { x + 1 }
+impl Core1
+{
+	pub fn new() -> Self
+	{
+		Core1 {}
+	}
+}

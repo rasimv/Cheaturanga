@@ -18,4 +18,4 @@
 
 pub mod core1;
 
-pub fn magic(x: i32) -> i32 { x + 1 }
+pub use core1::Core1;

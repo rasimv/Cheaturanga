@@ -16,12 +16,16 @@
 
 // rasimvaliullin@hotmail.com
 
+use core1;
+
 pub struct Controller<'a>
 {
 	input: &'a mut dyn std::io::Read,
 	output: &'a mut dyn std::io::Write,
 
-	queue: std::collections::LinkedList<String>
+	queue: std::collections::LinkedList<String>,
+
+	core1: core1::core1::Core1
 }
 
 type IoResultBool = Result<bool, std::io::Error>;
@@ -34,7 +38,10 @@ impl<'a> Controller<'a>
 			{
 				input: input,
 				output: output,
-				queue: std::collections::LinkedList::new()
+
+				queue: std::collections::LinkedList::new(),
+
+				core1: core1::core1::Core1::new()
 			}
 	}
 
@@ -94,7 +101,14 @@ impl<'a> Controller<'a>
 		Ok(false)
 	}
 
-	fn state(&mut self, tokens: Vec<&str>) -> IoResultBool { Ok(true) }
+	fn state(&mut self, tokens: Vec<&str>) -> IoResultBool
+	{
+		core1::magic(123);
+		let core1 = core1::core1::Core1{};
+
+		Ok(true)
+	}
+
 	fn valid(&mut self, tokens: Vec<&str>) -> IoResultBool { Ok(true) }
 	fn dice(&mut self, tokens: Vec<&str>) -> IoResultBool { Ok(true) }
 	fn best(&mut self, tokens: Vec<&str>) -> IoResultBool { Ok(true) }
