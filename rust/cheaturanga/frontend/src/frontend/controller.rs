@@ -71,11 +71,32 @@ impl<'a> Controller<'a>
 	{
 		assert!(self.queue.len() > 0);
 
-		if let Some(line) = self.queue.front()
-			{ if line == "quit\r\n" { return Ok(false); } }
+		let line = self.queue.pop_front().unwrap();
+		let tokens: Vec<&str> = line.split_whitespace().collect();
 
-		self.queue.pop_front();
-
-		Ok(true)
+		match tokens.get(0)
+		{
+			Some(&"quit") => self.quit(tokens),
+			Some(&"state") => self.state(tokens),
+			Some(&"valid") => self.valid(tokens),
+			Some(&"dice") => self.dice(tokens),
+			Some(&"best") => self.best(tokens),
+			Some(&"semi") => self.semi(tokens),
+			Some(_) => { self.output_line("wrong input")?; Ok(true) },
+			None => Ok(true)
+		}
 	}
+
+	fn quit(&mut self, tokens: Vec<&str>) -> IoResultBool
+	{
+		let _ = self.output_line("bye");
+
+		Ok(false)
+	}
+
+	fn state(&mut self, tokens: Vec<&str>) -> IoResultBool { Ok(true) }
+	fn valid(&mut self, tokens: Vec<&str>) -> IoResultBool { Ok(true) }
+	fn dice(&mut self, tokens: Vec<&str>) -> IoResultBool { Ok(true) }
+	fn best(&mut self, tokens: Vec<&str>) -> IoResultBool { Ok(true) }
+	fn semi(&mut self, tokens: Vec<&str>) -> IoResultBool { Ok(true) }
 }
