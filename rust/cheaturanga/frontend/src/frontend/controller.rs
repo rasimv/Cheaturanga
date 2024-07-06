@@ -16,7 +16,7 @@
 
 // rasimvaliullin@hotmail.com
 
-use core1;
+use core1::core1;
 
 pub struct Controller<'a>
 {
@@ -36,8 +36,7 @@ impl<'a> Controller<'a>
 	{
 		Controller
 			{
-				input: input,
-				output: output,
+				input, output,
 
 				queue: std::collections::LinkedList::new(),
 
@@ -47,6 +46,8 @@ impl<'a> Controller<'a>
 
 	pub fn run(&mut self) -> IoResultBool
 	{
+		let x = core1::fen::decode("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq a5 123 1444");
+
 		self.output_line("ready")?;
 
 		loop
@@ -103,11 +104,38 @@ impl<'a> Controller<'a>
 
 	fn state(&mut self, _: Vec<&str>) -> IoResultBool
 	{
+		self.output_line("ok")?;
+
 		Ok(true)
 	}
 
-	fn valid(&mut self, _: Vec<&str>) -> IoResultBool { Ok(true) }
-	fn dice(&mut self, tokens: Vec<&str>) -> IoResultBool { Ok(true) }
-	fn best(&mut self, _: Vec<&str>) -> IoResultBool { Ok(true) }
-	fn ply(&mut self, tokens: Vec<&str>) -> IoResultBool { Ok(true) }
+	fn valid(&mut self, _: Vec<&str>) -> IoResultBool
+	{
+		self.output_line("ok")?;
+
+		Ok(true)
+	}
+
+	fn dice(&mut self, tokens: Vec<&str>) -> IoResultBool
+	{
+		self.output_line("ok")?;
+
+		Ok(true)
+	}
+
+	fn best(&mut self, _: Vec<&str>) -> IoResultBool
+	{
+		self.output_line("ok")?;
+
+		Ok(true)
+	}
+
+	fn ply(&mut self, tokens: Vec<&str>) -> IoResultBool
+	{
+		self.output_line("ok")?;
+
+		//core1::core1::mech::opponent(1_i8, 1_i8);
+
+		Ok(true)
+	}
 }

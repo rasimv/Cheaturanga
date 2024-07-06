@@ -16,38 +16,32 @@
 
 // rasimvaliullin@hotmail.com
 
-use crate::core1::dim;
 use crate::core1::coords::Coords;
+use crate::core1::position::Position;
 
-#[derive(Default, Copy, Clone, PartialEq)]
-pub struct Layout
+pub fn is_opponent(turn: i8, occ: i8) -> bool
 {
-	pub d: [[i8; dim::WIDTH_US]; dim::HEIGHT_US]
+	occ != 0 && if turn == 0 { occ >= 'a' as i8 } else { occ < 'a' as i8 }
 }
 
-impl std::ops::Index<Coords> for Layout
+pub fn is_opponent_on_sq(pos: &Position, coords: Coords) -> bool
 {
-	type Output = i8;
+	assert!(coords.is_valid());
 
-	fn index(&self, coords: Coords) -> &Self::Output
-	{
-		assert!(coords.is_valid());
-
-		&self.d[coords.v as usize][coords.h as usize]
-	}
+	is_opponent(pos[coords], pos.turn)
 }
 
-impl std::ops::IndexMut<Coords> for Layout
+pub fn is_empty_or_opp(pos: &Position, coords: Coords) -> bool
 {
-	fn index_mut(&mut self, coords: Coords) -> &mut Self::Output
-	{
-		assert!(coords.is_valid());
+	assert!(coords.is_valid());
 
-		&mut self.d[coords.v as usize][coords.h as usize]
-	}
+	let occ = pos[coords];
+
+	occ == 0 || is_opponent(occ, pos.turn)
 }
 
-impl Layout
+fn test<Shifts>(pos: &Position, coords: Coords, shifts: &Shifts, subplies: &mut Vec<Coords>)
+	where Shifts: IntoIterator
 {
-	fn new() -> Self { Layout{d: [[0; dim::WIDTH_US]; dim::HEIGHT_US]} }
+	assert!(coords.is_valid());
 }

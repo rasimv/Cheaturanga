@@ -84,10 +84,22 @@ impl Coords
 {
 	pub fn new(h: i8, v: i8) -> Self { Coords{h, v} }
 
-	pub fn valid(&self) -> bool { valid(self) }
+	pub fn is_valid(&self) -> bool { is_valid(*self) }
 }
 
-pub fn valid(c: &Coords) -> bool
+pub fn is_valid(c: Coords) -> bool
 {
 	c.h >= 0 && c.h < dim::WIDTH && c.v >= 0 && c.v < dim::HEIGHT
+}
+
+pub fn from_string<I>(start: &mut I) -> Result<Coords, ()>
+where I: Iterator<Item = char>
+{
+	let h = if let Some(h) = start.next()
+		{ if 'a' > h || h > 'h' { return Err(()) } h } else { return Err(()) };
+
+	let v = if let Some(v) = start.next()
+		{ if '1' > v || v > '8' { return Err(()) } v } else { return Err(()) };
+
+	return Ok(Coords::new(h as i8 - 'a' as i8, '8' as i8 - v as i8))
 }

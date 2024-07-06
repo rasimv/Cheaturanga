@@ -21,5 +21,8 @@ pub mod dim;
 pub mod layout;
 pub mod coords;
 pub mod position;
+pub mod subply;
+pub mod mech;
+pub mod fen;
 
 pub use core1::Core1;
